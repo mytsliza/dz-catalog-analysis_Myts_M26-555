@@ -197,6 +197,40 @@ def high_rated_movies(movies):
         for movie in movies
         if movie["rating"] > avg
     }
+
+# --- ЭТАП 7 ---
+def all_genres(movies):
+    """Возвращает множество всех уникальных жанров каталога."""
+    genres = set()
+    for movie in movies:
+        # Объединяем текущее множество с жанрами фильма
+        genres.update(movie["genres"])
+    return genres
+
+
+def common_actors(movie1, movie2):
+    """Возвращает множество актеров, снимавшихся в обоих фильмах."""
+    # Пересечение множеств через &
+    return set(movie1["actors"]) & set(movie2["actors"])
+
+
+def genres_only_in_one(movies_a, movies_b):
+    """Возвращает жанры, встречающиеся в movies_a, но не в movies_b."""
+    genres_a = all_genres(movies_a)
+    genres_b = all_genres(movies_b)
+    # Разность множеств через -
+    return genres_a - genres_b
+# --- ЭТАП 8 ---
+def iter_high_rated(movies, min_rating=8.0):
+    """Генератор: лениво отдает фильмы с рейтингом не ниже min_rating."""
+    for movie in movies:
+        if movie["rating"] >= min_rating:
+            yield movie
+def total_duration_high_rated(movies):
+    """Считает суммарную длительность фильмов с рейтингом выше 7."""
+    # Генераторное выражение внутри sum (без квадратных скобок!)
+    return sum(m["duration_min"] for m in movies if m["rating"] > 7)
+
 # --- БЛОК ДЛЯ ПРОВЕРКИ ---
 if __name__ == "__main__":
     print("--- ПРОВЕРКА ЭТАПА 1 ---")
@@ -227,9 +261,21 @@ if __name__ == "__main__":
 
     print("\n--- ПРОВЕРКА ЭТАПА 6 ---")
     print(f"Статистика по жанрам: {count_by_genre(movies)}")
-    
     # Выведем только первые 3 фильма из фильмографии одного актера для примера
     filmography = actor_filmography(movies)
     print(f"\nФильмография O. Isaac: {filmography.get('O. Isaac')}")
-    
     print(f"\nФильмы с рейтингом выше среднего: {high_rated_movies(movies)}")
+
+    print("\n--- ПРОВЕРКА ЭТАПА 7 ---")
+    print(f"Все уникальные жанры: {all_genres(movies)}")
+    
+    print(f"Общие актеры фильмов 1 и 4: {common_actors(movies[0], movies[3])}")
+    # По примеру из задания: movies[5:6] (один фильм) и movies[:5] (первые пять)
+    print(f"Жанры только в 6-м фильме: {genres_only_in_one(movies[5:6], movies[:5])}")
+
+    print("\n--- ПРОВЕРКА ЭТАПА 8 ---")
+    print("Фильмы с рейтингом 8.0 и выше:")
+    for movie in iter_high_rated(movies):
+        print(format_report_line(movie))
+        
+    print(f"\nСуммарная длительность фильмов с рейтингом > 7: {total_duration_high_rated(movies)} мин")
