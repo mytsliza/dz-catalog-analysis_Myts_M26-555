@@ -13,4 +13,11 @@ dz-catalog-analysis-myts-m26-555 = "dz_catalog_analysis_myts_m26_555:main"
 dev = [
     "ruff>=0.17.1",
 ]
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = ["venv", ".venv", "dist", "__pycache__"]
 
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []
