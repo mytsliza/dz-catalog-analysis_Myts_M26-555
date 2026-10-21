@@ -143,6 +143,60 @@ def format_report_line(movie):
         f'"{normalize_title(movie["title"])}" ({movie["year"]}) — '
         f'{movie["rating"]}/10, {duration}, жанры: {sorted_genres}'
     )
+
+# --- ЭТАП 5 ---
+def titles_sorted_by_rating(movies):
+    """Возвращает список названий фильмов, отсортированных по убыванию рейтинга."""
+    # sorted() возвращает новый список и не изменяет исходный (требование выполнено)
+    sorted_movies = sorted(movies, key=lambda x: x["rating"], reverse=True)
+    # Извлекаем названия
+    return [movie["title"] for movie in sorted_movies]
+
+
+def top_n_by_rating(movies, n=3):
+    """Возвращает список из n кортежей (title, rating) — топ по рейтингу."""
+    sorted_movies = sorted(movies, key=lambda x: x["rating"], reverse=True)
+    # Используем срез [:n] для получения первых n элементов
+    # Генерируем именно кортежи (title, rating)
+    return [(movie["title"], movie["rating"]) for movie in sorted_movies[:n]]
+
+# --- ЭТАП 6 ---
+def count_by_genre(movies):
+    """Возвращает словарь {жанр: количество фильмов}, используя dict.get()."""
+    genre_counts = {}
+    for movie in movies:
+        for genre in movie["genres"]:
+            # Если ключа нет, get вернет 0, и мы прибавим 1.
+            # Если есть — возьмем текущее и прибавим 1.
+            genre_counts[genre] = genre_counts.get(genre, 0) + 1
+    return genre_counts
+
+
+def actor_filmography(movies):
+    """Возвращает словарь {актер: [список названий фильмов]}."""
+    filmography = {}
+    for movie in movies:
+        for actor in movie["actors"]:
+            # Если актера еще нет в словаре, создаем для него пустой список
+            if actor not in filmography:
+                filmography[actor] = []
+            # Добавляем название фильма в список актера
+            filmography[actor].append(movie["title"])
+    return filmography
+
+
+def high_rated_movies(movies):
+    """Возвращает {title: rating} для фильмов с рейтингом выше среднего."""
+    # Вызываем функцию из Этапа 1
+    avg = average_rating(movies)
+    
+    # Синтаксис генератора словаря:
+    #{key: value for item in iterable if condition}
+    return {
+        movie["title"]: movie["rating"]
+        for movie in movies
+        if movie["rating"] > avg
+    }
 # --- БЛОК ДЛЯ ПРОВЕРКИ ---
 if __name__ == "__main__":
     print("--- ПРОВЕРКА ЭТАПА 1 ---")
@@ -157,9 +211,7 @@ if __name__ == "__main__":
     print("\n--- ПРОВЕРКА ЭТАПА 3 ---")
     print("Фильмы не-комедии:")
     print_non_comedy(movies)
-    
     print(f"\nФильмов длиннее 120 минут: {count_long_movies(movies)}")
-    
     print("\nПоиск шедевра:")
     find_first_masterpiece(movies)
 
@@ -167,3 +219,17 @@ if __name__ == "__main__":
     print(f"normalize_title('silent hours'): {normalize_title('silent hours')}")
     print(f"make_slug('Silent Hours'): {make_slug('Silent Hours')}")
     print(f"Строка отчета: {format_report_line(movies[7])}")
+    
+    print("\n--- ПРОВЕРКА ЭТАПА 5 ---")
+    print("Топ-3 по рейтингу:")
+    print(top_n_by_rating(movies, 3))
+    print(f"\nПервый в отсортированном списке: {titles_sorted_by_rating(movies)[0]}")
+
+    print("\n--- ПРОВЕРКА ЭТАПА 6 ---")
+    print(f"Статистика по жанрам: {count_by_genre(movies)}")
+    
+    # Выведем только первые 3 фильма из фильмографии одного актера для примера
+    filmography = actor_filmography(movies)
+    print(f"\nФильмография O. Isaac: {filmography.get('O. Isaac')}")
+    
+    print(f"\nФильмы с рейтингом выше среднего: {high_rated_movies(movies)}")
