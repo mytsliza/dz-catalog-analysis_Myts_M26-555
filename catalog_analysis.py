@@ -234,8 +234,6 @@ def total_duration_high_rated(movies):
 # --- ЭТАП 9 ---
 def build_report(movies):
     """Собирает результаты всех предыдущих этапов в единый консольный отчет."""
-    print("ОТЧЕТ ПО КАТАЛОГУ")
-    
     # 1. Общая статистика
     avg_rating = average_rating(movies)
     _, _, avg_age = catalog_age_stats(movies)
@@ -247,16 +245,13 @@ def build_report(movies):
     print("Топ-3 фильма:")
     top_movies = top_n_by_rating(movies, 3)
     for title, _ in top_movies:
-        # Находим полный словарь фильма по названию, чтобы передать в format_report_line
-        # (так как top_n_by_rating возвращает только кортежи title, rating)
         movie_obj = next(m for m in movies if m["title"] == title)
         print(f"  {format_report_line(movie_obj)}")
     print()
 
-    # 3. Фильмов по жанрам (отсортировано по убыванию количества)
+    # 3. Фильмов по жанрам
     print("Фильмов по жанрам:")
     genre_counts = count_by_genre(movies)
-    # Сортируем словарь по значениям (количеству) по убыванию
     sorted_genres = sorted(genre_counts.items(), key=lambda item: item[1], reverse=True)
     for genre, count in sorted_genres:
         print(f"  {genre} — {count}")
@@ -264,7 +259,6 @@ def build_report(movies):
 
     # 4. Все жанры каталога
     genres_set = all_genres(movies)
-    # Сортируем по алфавиту и склеиваем через запятую
     genres_str = ", ".join(sorted(genres_set))
     print(f"Все жанры каталога: {genres_str}")
 
