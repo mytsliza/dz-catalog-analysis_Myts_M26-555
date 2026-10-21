@@ -3,7 +3,8 @@ import math
 # --- ИСХОДНЫЕ ДАННЫЕ ---
 movies = [
     {"title": "The Dune Chronicles", "year": 2021, "genres": {"sci-fi", "drama"},
-     "rating": 8.6, "duration_min": 155, "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
+     "rating": 8.6, "duration_min": 155,
+     "actors": ["T. Chalamet", "R. Ferguson", "O. Isaac"]},
     {"title": "Kitchen Stories", "year": 2019, "genres": {"comedy", "drama"},
      "rating": 7.1, "duration_min": 98, "actors": ["A. Novak", "M. Ferguson"]},
     {"title": "silent hours", "year": 2016, "genres": {"thriller", "drama"},
@@ -81,23 +82,88 @@ def decade_label(year):
             return "старые"
 
 
+# --- ЭТАП 3 ---
+def count_long_movies(movies, threshold=120):
+    """Считает количество фильмов длиннее threshold минут."""
+    count = 0
+    for movie in movies:
+        if movie["duration_min"] > threshold:
+            count += 1
+    return count
+
+
+def print_non_comedy(movies):
+    """Выводит названия фильмов, которые НЕ комедии (с использованием continue)."""
+    for movie in movies:
+        if "comedy" in movie["genres"]:
+            continue  # Пропускаем комедии
+        print(movie["title"])
+
+
+def find_first_masterpiece(movies):
+    """Ищет первый фильм с рейтингом > 9.0 (с использованием while и break)."""
+    index = 0
+    while index < len(movies):
+        if movies[index]["rating"] > 9.0:
+            print(f"Первый шедевр: {movies[index]['title']}")
+            break
+        index += 1
+    else:
+        # Ветка else выполняется, если цикл завершился без break
+        print("Шедевров не найдено")
+
+# --- ЭТАП 4 ---
+def normalize_title(title):
+    """Приводит строку к Title Case вручную, без str.title()."""
+    words = title.split()
+    result = []
+    for word in words:
+        # Делаем первую букву заглавной, остальные оставляем как есть
+        normalized_word = word[0].upper() + word[1:]
+        result.append(normalized_word)
+    return " ".join(result)
+
+
+def make_slug(title):
+    """Превращает нормализованное название в слаг."""
+    # Используем lower() и replace()
+    return normalize_title(title).lower().replace(" ", "-")
+
+
+def format_report_line(movie):
+    """Возвращает единую строку с описанием фильма."""
+    # Сортируем жанры по алфавиту и склеиваем через запятую
+    sorted_genres = ", ".join(sorted(movie["genres"]))
+    
+    # Вызываем функцию из Этапа 1 для перевода минут
+    duration = duration_in_hours(movie["duration_min"])
+    
+    # Формируем строку через f-string
+    return (
+        f'"{normalize_title(movie["title"])}" ({movie["year"]}) — '
+        f'{movie["rating"]}/10, {duration}, жанры: {sorted_genres}'
+    )
 # --- БЛОК ДЛЯ ПРОВЕРКИ ---
 if __name__ == "__main__":
     print("--- ПРОВЕРКА ЭТАПА 1 ---")
     print(f"Средняя оценка: {average_rating(movies)}")
-    
-    stats = catalog_age_stats(movies)
-    print(f"Возраст фильмов (старый, новый, средний): {stats}")
-    
+    print(f"Возраст фильмов: {catalog_age_stats(movies)}")
     print(f"155 минут это: {duration_in_hours(155)}")
-    print(f"89 минут это: {duration_in_hours(89)}")
 
     print("\n--- ПРОВЕРКА ЭТАПА 2 ---")
     print(f"Рейтинг 9.5: {rating_tier(9.5)}")
-    print(f"Рейтинг 8.0: {rating_tier(8.0)}")
-    print(f"Рейтинг 5.0: {rating_tier(5.0)}")
-    print(f"Рейтинг 4.0: {rating_tier(4.0)}")
-
-    print(f"Год 2024: {decade_label(2024)}")
     print(f"Год 2018: {decade_label(2018)}")
-    print(f"Год 2010: {decade_label(2010)}")
+
+    print("\n--- ПРОВЕРКА ЭТАПА 3 ---")
+    print("Фильмы не-комедии:")
+    print_non_comedy(movies)
+    
+    print(f"\nФильмов длиннее 120 минут: {count_long_movies(movies)}")
+    
+    print("\nПоиск шедевра:")
+    find_first_masterpiece(movies)
+
+    print("\n--- ПРОВЕРКА ЭТАПА 4 ---")
+    print(f"normalize_title('silent hours'): {normalize_title('silent hours')}")
+    print(f"make_slug('Silent Hours'): {make_slug('Silent Hours')}")
+    print(f"Строка отчета: {format_report_line(movies[7])}")
