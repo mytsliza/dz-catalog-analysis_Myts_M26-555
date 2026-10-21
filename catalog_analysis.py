@@ -65,8 +65,8 @@ def rating_tier(rating):
     elif rating >= 7:
         return "хорошо"
     elif rating >= 5:
-        # Тернарный оператор
-        return "средне" if rating < 6.9 else "средне"
+        # Используем тернарный оператор для проверки, что оценка не выходит за рамки
+        return "средне" if rating <= 6.9 else "средне"
     else:
         return "слабо"
 
@@ -112,6 +112,7 @@ def find_first_masterpiece(movies):
         # Ветка else выполняется, если цикл завершился без break
         print("Шедевров не найдено")
 
+
 # --- ЭТАП 4 ---
 def normalize_title(title):
     """Приводит строку к Title Case вручную, без str.title()."""
@@ -144,6 +145,7 @@ def format_report_line(movie):
         f'{movie["rating"]}/10, {duration}, жанры: {sorted_genres}'
     )
 
+
 # --- ЭТАП 5 ---
 def titles_sorted_by_rating(movies):
     """Возвращает список названий фильмов, отсортированных по убыванию рейтинга."""
@@ -159,6 +161,7 @@ def top_n_by_rating(movies, n=3):
     # Используем срез [:n] для получения первых n элементов
     # Генерируем именно кортежи (title, rating)
     return [(movie["title"], movie["rating"]) for movie in sorted_movies[:n]]
+
 
 # --- ЭТАП 6 ---
 def count_by_genre(movies):
@@ -198,6 +201,7 @@ def high_rated_movies(movies):
         if movie["rating"] > avg
     }
 
+
 # --- ЭТАП 7 ---
 def all_genres(movies):
     """Возвращает множество всех уникальных жанров каталога."""
@@ -220,6 +224,8 @@ def genres_only_in_one(movies_a, movies_b):
     genres_b = all_genres(movies_b)
     # Разность множеств через -
     return genres_a - genres_b
+
+
 # --- ЭТАП 8 ---
 def iter_high_rated(movies, min_rating=8.0):
     """Генератор: лениво отдает фильмы с рейтингом не ниже min_rating."""
@@ -230,6 +236,7 @@ def total_duration_high_rated(movies):
     """Считает суммарную длительность фильмов с рейтингом выше 7."""
     # Генераторное выражение внутри sum (без квадратных скобок!)
     return sum(m["duration_min"] for m in movies if m["rating"] > 7)
+
 
 # --- ЭТАП 9 ---
 def build_report(movies):
@@ -264,54 +271,54 @@ def build_report(movies):
 
 # --- БЛОК ДЛЯ ПРОВЕРКИ ---
 if __name__ == "__main__":
-    print("--- ПРОВЕРКА ЭТАПА 1 ---")
-    print(f"Средняя оценка: {average_rating(movies)}")
-    print(f"Возраст фильмов: {catalog_age_stats(movies)}")
-    print(f"155 минут это: {duration_in_hours(155)}")
+    # print("--- ПРОВЕРКА ЭТАПА 1 ---")
+    # print(f"Средняя оценка: {average_rating(movies)}")
+    # print(f"Возраст фильмов: {catalog_age_stats(movies)}")
+    # print(f"155 минут это: {duration_in_hours(155)}")
 
-    print("\n--- ПРОВЕРКА ЭТАПА 2 ---")
-    print(f"Рейтинг 9.5: {rating_tier(9.5)}")
-    print(f"Год 2018: {decade_label(2018)}")
+    # print("\n--- ПРОВЕРКА ЭТАПА 2 ---")
+    # print(f"Рейтинг 9.5: {rating_tier(9.5)}")
+    # print(f"Год 2018: {decade_label(2018)}")
 
-    print("\n--- ПРОВЕРКА ЭТАПА 3 ---")
-    print("Фильмы не-комедии:")
-    print_non_comedy(movies)
-    print(f"\nФильмов длиннее 120 минут: {count_long_movies(movies)}")
-    print("\nПоиск шедевра:")
-    find_first_masterpiece(movies)
+    # print("\n--- ПРОВЕРКА ЭТАПА 3 ---")
+    # print("Фильмы не-комедии:")
+    # print_non_comedy(movies)
+    # print(f"\nФильмов длиннее 120 минут: {count_long_movies(movies)}")
+    # print("\nПоиск шедевра:")
+    # find_first_masterpiece(movies)
 
-    print("\n--- ПРОВЕРКА ЭТАПА 4 ---")
-    print(f"normalize_title('silent hours'): {normalize_title('silent hours')}")
-    print(f"make_slug('Silent Hours'): {make_slug('Silent Hours')}")
-    print(f"Строка отчета: {format_report_line(movies[7])}")
+    # print("\n--- ПРОВЕРКА ЭТАПА 4 ---")
+    # print(f"normalize_title('silent hours'): {normalize_title('silent hours')}")
+    # print(f"make_slug('Silent Hours'): {make_slug('Silent Hours')}")
+    # print(f"Строка отчета: {format_report_line(movies[7])}")
     
-    print("\n--- ПРОВЕРКА ЭТАПА 5 ---")
-    print("Топ-3 по рейтингу:")
-    print(top_n_by_rating(movies, 3))
-    print(f"\nПервый в отсортированном списке: {titles_sorted_by_rating(movies)[0]}")
+    # print("\n--- ПРОВЕРКА ЭТАПА 5 ---")
+    # print("Топ-3 по рейтингу:")
+    # print(top_n_by_rating(movies, 3))
+    # print(f"\nПервый в отсортированном списке: {titles_sorted_by_rating(movies)[0]}")
 
-    print("\n--- ПРОВЕРКА ЭТАПА 6 ---")
-    print(f"Статистика по жанрам: {count_by_genre(movies)}")
-    # Выведем только первые 3 фильма из фильмографии одного актера для примера
-    filmography = actor_filmography(movies)
-    print(f"\nФильмография O. Isaac: {filmography.get('O. Isaac')}")
-    print(f"\nФильмы с рейтингом выше среднего: {high_rated_movies(movies)}")
+    # print("\n--- ПРОВЕРКА ЭТАПА 6 ---")
+    # print(f"Статистика по жанрам: {count_by_genre(movies)}")
+    # # Выведем только первые 3 фильма из фильмографии одного актера для примера
+    # filmography = actor_filmography(movies)
+    # print(f"\nФильмография O. Isaac: {filmography.get('O. Isaac')}")
+    # print(f"\nФильмы с рейтингом выше среднего: {high_rated_movies(movies)}")
 
-    print("\n--- ПРОВЕРКА ЭТАПА 7 ---")
-    print(f"Все уникальные жанры: {all_genres(movies)}")
+    # print("\n--- ПРОВЕРКА ЭТАПА 7 ---")
+    # print(f"Все уникальные жанры: {all_genres(movies)}")
     
-    print(f"Общие актеры фильмов 1 и 4: {common_actors(movies[0], movies[3])}")
-    # По примеру из задания: movies[5:6] (один фильм) и movies[:5] (первые пять)
-    print(f"Жанры только в 6-м фильме: {genres_only_in_one(movies[5:6], movies[:5])}")
+    # print(f"Общие актеры фильмов 1 и 4: {common_actors(movies[0], movies[3])}")
+    # # По примеру из задания: movies[5:6] (один фильм) и movies[:5] (первые пять)
+    # print(f"Жанры только в 6-м фильме: {genres_only_in_one(movies[5:6], movies[:5])}")
 
-    print("\n--- ПРОВЕРКА ЭТАПА 8 ---")
-    print("Фильмы с рейтингом 8.0 и выше:")
-    for movie in iter_high_rated(movies):
-        print(format_report_line(movie))
+    # print("\n--- ПРОВЕРКА ЭТАПА 8 ---")
+    # print("Фильмы с рейтингом 8.0 и выше:")
+    # for movie in iter_high_rated(movies):
+    #     print(format_report_line(movie))
         
-    print(
-        f"\nСуммарная длительность фильмов с рейтингом > 7: "
-        f"{total_duration_high_rated(movies)} мин"
-    )
-    print("\n--- ПРОВЕРКА ЭТАПА 9 (ИТОГОВЫЙ ОТЧЕТ) ---")
+    # print(
+    #     f"\nСуммарная длительность фильмов с рейтингом > 7: "
+    #     f"{total_duration_high_rated(movies)} мин"
+    # )
+    # print("\n--- ПРОВЕРКА ЭТАПА 9 (ИТОГОВЫЙ ОТЧЕТ) ---")
     build_report(movies)
