@@ -231,6 +231,43 @@ def total_duration_high_rated(movies):
     # Генераторное выражение внутри sum (без квадратных скобок!)
     return sum(m["duration_min"] for m in movies if m["rating"] > 7)
 
+# --- ЭТАП 9 ---
+def build_report(movies):
+    """Собирает результаты всех предыдущих этапов в единый консольный отчет."""
+    print("ОТЧЕТ ПО КАТАЛОГУ")
+    
+    # 1. Общая статистика
+    avg_rating = average_rating(movies)
+    _, _, avg_age = catalog_age_stats(movies)
+    print(f"Средний рейтинг: {avg_rating}")
+    print(f"Средний возраст фильмов: {avg_age} лет")
+    print()
+
+    # 2. Топ-3 фильма
+    print("Топ-3 фильма:")
+    top_movies = top_n_by_rating(movies, 3)
+    for title, _ in top_movies:
+        # Находим полный словарь фильма по названию, чтобы передать в format_report_line
+        # (так как top_n_by_rating возвращает только кортежи title, rating)
+        movie_obj = next(m for m in movies if m["title"] == title)
+        print(f"  {format_report_line(movie_obj)}")
+    print()
+
+    # 3. Фильмов по жанрам (отсортировано по убыванию количества)
+    print("Фильмов по жанрам:")
+    genre_counts = count_by_genre(movies)
+    # Сортируем словарь по значениям (количеству) по убыванию
+    sorted_genres = sorted(genre_counts.items(), key=lambda item: item[1], reverse=True)
+    for genre, count in sorted_genres:
+        print(f"  {genre} — {count}")
+    print()
+
+    # 4. Все жанры каталога
+    genres_set = all_genres(movies)
+    # Сортируем по алфавиту и склеиваем через запятую
+    genres_str = ", ".join(sorted(genres_set))
+    print(f"Все жанры каталога: {genres_str}")
+
 # --- БЛОК ДЛЯ ПРОВЕРКИ ---
 if __name__ == "__main__":
     print("--- ПРОВЕРКА ЭТАПА 1 ---")
@@ -278,4 +315,9 @@ if __name__ == "__main__":
     for movie in iter_high_rated(movies):
         print(format_report_line(movie))
         
-    print(f"\nСуммарная длительность фильмов с рейтингом > 7: {total_duration_high_rated(movies)} мин")
+    print(
+        f"\nСуммарная длительность фильмов с рейтингом > 7: "
+        f"{total_duration_high_rated(movies)} мин"
+    )
+    print("\n--- ПРОВЕРКА ЭТАПА 9 (ИТОГОВЫЙ ОТЧЕТ) ---")
+    build_report(movies)
